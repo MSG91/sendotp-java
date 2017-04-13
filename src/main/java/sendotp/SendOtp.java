@@ -1,10 +1,13 @@
 package sendotp;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.io.IOUtils;
 
 /**
  *
@@ -80,23 +83,29 @@ public class SendOtp {
     return params;
   }
   
-  public void send(String contactNumber, String senderId) {
+  public SendOtpResponse send(String contactNumber, String senderId) {
     String otp = generateOtp(6);
     Map<String, String> params = getSendParams(contactNumber, senderId, otp);
-    post(SEND_PATH, params, "");
+    SendOtpResponse response = post(SEND_PATH, params, "");
+    return response;
   }
   
-  public void retry(String contactNumber, boolean retryVoice) {
+  public SendOtpResponse retry(String contactNumber, boolean retryVoice) {
     Map<String, String> params = getRetryParams(contactNumber, retryVoice);
-    post(RETRY_PATH, params, "");
+    SendOtpResponse response = post(RETRY_PATH, params, "");
+    return response;
   }
   
-  public void verify(String contactNumber, String otp) {
+  public SendOtpResponse verify(String contactNumber, String otp) {
     Map<String, String> params = getVerifyParams(contactNumber, otp);
-    post(VERIFY_PATH, params, "");
+    SendOtpResponse response = post(VERIFY_PATH, params, "");
+    return response;
   }
   
   public String generateOtp(int len) {
+    if(len <= 0) {
+      len = 6;
+    }
     String chars = "0123456789";
     String randomString = "";
     int length = chars.length();
@@ -106,7 +115,7 @@ public class SendOtp {
     return randomString;
   }
   
-  private int post(final String path, final Map<String, String> params, String userAgent) {
+  private SendOtpResponse post(final String path, final Map<String, String> params, String userAgent) {
     String url = MSG91_URL + path;
     PostMethod pm = new PostMethod(url);
     pm.setRequestHeader("User-Agent", userAgent);
@@ -114,12 +123,17 @@ public class SendOtp {
       pm.addParameter(param.getKey(), param.getValue());
     });
     HttpClient hc = new HttpClient(); 
+    int statusCode = 200;
+    String message = "";
     try {
       hc.executeMethod(pm);
+      statusCode = pm.getStatusCode();
+      InputStream is = pm.getResponseBodyAsStream();
+      message = IOUtils.toString(is, StandardCharsets.UTF_8.name());
     } catch (IOException ex) {
+    
     }
-    int statusCode = pm.getStatusCode();
     pm.releaseConnection();
-    return statusCode;
+    return new SendOtpResponse(message, statusCode);
   }
 }
