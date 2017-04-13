@@ -55,7 +55,7 @@ public class SendOtp {
   
   private Map<String, String> getSendParams(String contactNumber, String senderId, String otp) {
     Map<String, String> params = new HashMap<>();
-    params.put("authKey", this.authKey);
+    params.put("authkey", this.authKey);
     params.put("mobile", contactNumber);
     params.put("sender", senderId);
     params.put("message", this.messageTemplate.replace("{{otp}}", otp));
@@ -69,7 +69,7 @@ public class SendOtp {
       retryType = "text";
     }
     Map<String, String> params = new HashMap<>();
-    params.put("authKey", this.authKey);
+    params.put("authkey", this.authKey);
     params.put("mobile", contactNumber);
     params.put("retryType", retryType);
     return params;
@@ -77,7 +77,7 @@ public class SendOtp {
   
   private Map<String, String> getVerifyParams(String contactNumber, String otp) {
     Map<String, String> params = new HashMap<>();
-    params.put("authKey", this.authKey);
+    params.put("authkey", this.authKey);
     params.put("mobile", contactNumber);
     params.put("otp", otp);
     return params;
