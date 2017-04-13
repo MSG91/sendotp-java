@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.IOUtils;
+import sendotp.util.JsonUtil;
 
 /**
  *
@@ -26,7 +27,7 @@ public class SendOtp {
   public SendOtp(String authKey, String messageTemplate) {
     this.authKey = authKey;
     if(messageTemplate == null || messageTemplate.isEmpty()) {
-      this.messageTemplate = "Your otp is {{otp}}. Please do not share it with anybody";
+      this.messageTemplate = "Your otp is {{otp}}. Please do not share it with anybody.";
     } else {
       this.messageTemplate = messageTemplate;
     }
@@ -123,17 +124,18 @@ public class SendOtp {
       pm.addParameter(param.getKey(), param.getValue());
     });
     HttpClient hc = new HttpClient(); 
-    int statusCode = 200;
-    String message = "";
+    Response response = null;
     try {
       hc.executeMethod(pm);
-      statusCode = pm.getStatusCode();
       InputStream is = pm.getResponseBodyAsStream();
-      message = IOUtils.toString(is, StandardCharsets.UTF_8.name());
+      String resp = IOUtils.toString(is, StandardCharsets.UTF_8.name());
+      response = JsonUtil.parseJson(resp, Response.class);
     } catch (IOException ex) {
     
     }
     pm.releaseConnection();
-    return new SendOtpResponse(message, statusCode);
+    SendOtpResponse sendOtpResponse = new SendOtpResponse(params.get("otp"), 
+      response.getMessage(), response.getType());
+    return sendOtpResponse;
   }
 }

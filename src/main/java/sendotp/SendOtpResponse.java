@@ -1,23 +1,25 @@
 package sendotp;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import sendotp.util.JsonUtil;
+
 /**
  *
  * @author gauravmahawar
  */
-public class SendOtpResponse {
-  private String message;
-  private int statusCode;
+public class SendOtpResponse extends Response {
+  private String otp;
   
-  public SendOtpResponse(String message, int statusCode) {
-    this.message = message;
-    this.statusCode = statusCode;
+  public SendOtpResponse(String otp, String message, String type) {
+    super(message, type);
+    this.otp = otp;
   }
   
-  public String getMessage() {
-    return this.message;
-  }
-  
-  public int getStatusCode() {
-    return this.statusCode;
+  public String asString() {
+    try {
+      return JsonUtil.toJsonAsString(this);
+    } catch (JsonProcessingException ex) {
+      return null;
+    }
   }
 }
