@@ -24,6 +24,13 @@ public class SendOtp {
   private String authKey;
   private String messageTemplate;
   
+  /**
+   * 
+   * Constructor with custom message template.
+   *
+   * @param authKey
+   * @param messageTemplate 
+   */
   public SendOtp(String authKey, String messageTemplate) {
     this.authKey = authKey;
     if(messageTemplate == null || messageTemplate.isEmpty()) {
@@ -33,6 +40,12 @@ public class SendOtp {
     }
   }
   
+  /**
+   * 
+   * Constructor with default message template.
+   * 
+   * @param authKey 
+   */
   public SendOtp(String authKey) {
     this.authKey = authKey;
     this.messageTemplate = "Your otp is {{otp}}. Please do not share it with anybody";
@@ -46,6 +59,14 @@ public class SendOtp {
     return this.messageTemplate;
   }
   
+  /**
+   * 
+   * Send otp to the provided contact number.
+   * 
+   * @param contactNumber
+   * @param senderId
+   * @param otp 
+   */
   public void send(String contactNumber, String senderId, String otp) {
     if(otp == null) {
       send(contactNumber, senderId);
@@ -84,6 +105,15 @@ public class SendOtp {
     return params;
   }
   
+  /**
+   * 
+   * Send otp to the provided contact number. 
+   * The otp will be generated automatically and will be of 6 characters.
+   * 
+   * @param contactNumber
+   * @param senderId
+   * @return 
+   */
   public SendOtpResponse send(String contactNumber, String senderId) {
     String otp = generateOtp(6);
     Map<String, String> params = getSendParams(contactNumber, senderId, otp);
@@ -91,12 +121,28 @@ public class SendOtp {
     return response;
   }
   
+  /**
+   * 
+   * Retry for the provided contact number.
+   * 
+   * @param contactNumber
+   * @param retryVoice
+   * @return 
+   */
   public SendOtpResponse retry(String contactNumber, boolean retryVoice) {
     Map<String, String> params = getRetryParams(contactNumber, retryVoice);
     SendOtpResponse response = post(RETRY_PATH, params, "");
     return response;
   }
   
+  /**
+   * 
+   * Verify otp for the provided contact number.
+   * 
+   * @param contactNumber
+   * @param otp
+   * @return 
+   */
   public SendOtpResponse verify(String contactNumber, String otp) {
     Map<String, String> params = getVerifyParams(contactNumber, otp);
     SendOtpResponse response = post(VERIFY_PATH, params, "");

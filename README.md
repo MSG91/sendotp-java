@@ -48,5 +48,5 @@ String response = sendOtp.verify(contactNumber, otp);
 * Retry:
 
 ```java
-String response = sendOtp.retry(contactNumber, retryVoice);
+String response = sendOtp.retry(contactNumber, false); //send true is retrying for voice
 ```
