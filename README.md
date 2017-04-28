@@ -8,14 +8,14 @@ Installation
 * Maven installation:
 
 ```xml
-	<dependencies>
-      ..
-      <dependency>
+<dependencies>
+	..
+    <dependency>
         <groupId>sendotp-java</groupId>
         <artifactId>sendotp-java</artifactId>
         <version>1.0.0</version>
-      </dependency>
-    </dependencies>
+    </dependency>
+</dependencies>
 ```
 
 Usage
